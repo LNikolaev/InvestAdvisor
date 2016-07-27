@@ -1,7 +1,7 @@
 # InvestAdvisor
 InvestAdvisor
 
-To run program, i use comand prompt in the same directory:        
+To run program, i use Command Prompt in the same directory:        
 javac InvestAdvisor.java                  
 java InvestAdvisor data.txt 
 
