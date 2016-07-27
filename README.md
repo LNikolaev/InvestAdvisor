@@ -6,5 +6,5 @@ javac InvestAdvisor.java
 java InvestAdvisor data.txt 
 
 I use knapsack algorithm.            
-Then new file will been created with result (name = selectedProjects.txt).
+Then a new file will been created with result (name = selectedProjects.txt).
 
