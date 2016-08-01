@@ -37,7 +37,7 @@ public class InvestAdvisor {
 					+ project.getInvestmentValue() + " netvalue = "
 					+ project.getNetValue());
 		}
-
+		//asd
 		processData();
 		System.out.println("--------Data processed---------");
 		System.out.println("--------Selected Projects---------");
