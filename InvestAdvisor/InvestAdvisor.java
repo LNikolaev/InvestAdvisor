@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
+ * The InvestAdvisor is a program which help on investor to making investment
+ * decisions, so that the available resources to gather the maximum amount of
+ * net value of the projects.
+ * 
  * @author Nikolaev
  *
  */
@@ -16,76 +20,77 @@ public class InvestAdvisor {
 	private static int totalInvestmentValue;
 	private static ArrayList<Project> projects = new ArrayList<Project>();
 	private static ArrayList<Project> selectedProjects = new ArrayList<Project>();
-	
+
 	public static void main(String[] args) {
 		String pathname = null;
-		try{
+		try {
 			pathname = args[0];
-		}catch(ArrayIndexOutOfBoundsException e){
+		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Please provide file path argument!");
 			return;
 		}
-		
+
 		// Point one and two
 		readFileAndLoadData(pathname);
 
 		System.out.println("--------Data loaded---------");
 		System.out.println("totalInvestmentValue: " + totalInvestmentValue);
-		//print values from read data
+		// print values from read data
 		for (Project project : projects) {
-			System.out.println("Project: investmentValue = "
-					+ project.getInvestmentValue() + " netvalue = "
+			System.out.println("Project: investmentValue = " + project.getInvestmentValue() + " netvalue = "
 					+ project.getNetValue());
 		}
-		
+
 		processData();
 		System.out.println("--------Data processed---------");
 		System.out.println("--------Selected Projects---------");
-		//print result from knapsack algorithm
+		
+		// print result from knapsack algorithm
 		for (Project project : selectedProjects) {
-			System.out.println("Project: investmentValue = "
-					+ project.getInvestmentValue() + " netvalue = "
+			System.out.println("Project: investmentValue = " + project.getInvestmentValue() + " netvalue = "
 					+ project.getNetValue());
 		}
 		System.out.println("--------Writting to file---------");
-		//write result in file
+		
+		// write result in file
 		writeSeletedProjectsToFile(pathname);
 		System.out.println("--------Job Done---------");
 	}
 
 	/**
-	 * @author Nikolaev
 	 * Write result to file
 	 */
-	public static void writeSeletedProjectsToFile(String pathname){
+	public static void writeSeletedProjectsToFile(String pathname) {
 		File file = new File(pathname);
 		File newFile = null;
-		if(file.getParent() == null){  //check if result file "selectedProjects.txt" exist. If does not exist, program will create it.
+		
+		/* Check if result file "selectedProjects.txt" exist. If does not exist,
+		 * program will create it.
+		 */
+		if (file.getParent() == null) {
 			newFile = new File("selectedProjects.txt");
-		}
-		else{
+		} else {
 			newFile = new File(file.getParent() + File.separator + "selectedProjects.txt");
 		}
-		
+
 		FileWriter fileWriter = null;
 		BufferedWriter writer = null;
 		try {
 			fileWriter = new FileWriter(newFile);
 			writer = new BufferedWriter(fileWriter);
-			for(Project project : selectedProjects){
+			for (Project project : selectedProjects) {
 				writer.write(project.getInvestmentValue() + " " + project.getNetValue());
-				writer.newLine(); //insert new line
+				writer.newLine(); // insert new line
 			}
+			
 			// flushes the stream
 			writer.flush();
-			
+
 		} catch (FileNotFoundException e) {
-			System.out.println("Error reading file: " + pathname + " "
-					+ e.getMessage());
+			System.out.println("Error reading file: " + pathname + " " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Error reading file: " + pathname + " "
-					+ e.getMessage());
+			System.out.println("Error reading file: " + pathname + " " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			try {
@@ -100,8 +105,8 @@ public class InvestAdvisor {
 			}
 		}
 	}
+
 	/**
-	 * @author Nikolaev
 	 * Present knapsack algorithm
 	 */
 	public static void processData() {
@@ -109,17 +114,19 @@ public class InvestAdvisor {
 		int N = projects.size(); // number of items
 		int W = totalInvestmentValue; // maximum weight of knapsack
 
-		int[] investment = new int[projects.size()+1];
-		int[] netValue = new int[projects.size()+1];
+		int[] investment = new int[projects.size() + 1];
+		int[] netValue = new int[projects.size() + 1];
 		for (int i = 0; i < projects.size(); i++) {
 			Project currentProject = projects.get(i);
-			investment[i+1] = currentProject.getInvestmentValue();
-			netValue[i+1] = currentProject.getNetValue();
+			investment[i + 1] = currentProject.getInvestmentValue();
+			netValue[i + 1] = currentProject.getNetValue();
 		}
 
-		// opt[n][w] = max profit of packing items 1..n with weight limit w
-		// sol[n][w] = does opt solution to pack items 1..n with weight limit w
-		// include item n?
+		/*
+		 * opt[n][w] = max profit of packing items 1..n with weight limit w
+		 * sol[n][w] = does opt solution to pack items 1..n with weight limit w
+		 * include item n?
+		 */
 		int[][] opt = new int[N + 1][W + 1];
 		boolean[][] sol = new boolean[N + 1][W + 1];
 
@@ -153,12 +160,19 @@ public class InvestAdvisor {
 
 		for (int n = 1; n <= N; n++) {
 			boolean selected = take[n];
-			if(selected){
+			if (selected) {
 				selectedProjects.add(new Project(investment[n], netValue[n]));
 			}
 		}
 	}
 
+	/**
+	 * This method read values from text document
+	 * 
+	 * @param filepath
+	 *            This is path to the file, where we must say his location (e.g
+	 *            "java InvestAdvisor data.txt")
+	 */
 	public static void readFileAndLoadData(String filepath) {
 		// Will come from arg parameter
 		File file = new File(filepath);
@@ -168,39 +182,54 @@ public class InvestAdvisor {
 			fileReader = new FileReader(file);
 			reader = new BufferedReader(fileReader);
 			String line = null;
-
 			boolean firstLine = true;
-			while ((line = reader.readLine()) != null) { //read lines for data.txt
-				if (firstLine) { //Use this if condition only for first line, where is total investment value.
+			
+			/* This while read lines for data.txt */
+			while ((line = reader.readLine()) != null) {
+
+				/*
+				 * Use this if condition only for first line, where is total
+				 * investment value.
+				 */
+				if (firstLine) {
 					firstLine = false;
-					totalInvestmentValue = Integer.parseInt(line.trim()); //read and set total investment value
+					
+					/* Read and set total investment value. */
+					totalInvestmentValue = Integer.parseInt(line.trim());
 				} else {
-					String[] split = line.split(" "); //split values by white space
-					if(split.length != 2){ // check if elements is not equals to two.
+					
+					/* Split values by white space */
+					String[] split = line.split(" ");
+
+					/* Check if elements is not equals to two. */
+					if (split.length != 2) {
 						System.out.println("Missed line due format error --> " + line);
-					}
-					else{
-						try{
-							int investmentValue = Integer.parseInt(split[0]); //set investment value from split. 
-							int netValue = Integer.parseInt(split[1]); //set net value from split.
-							Project project = new Project(investmentValue, netValue); //create new Project object with values from split.
+					} else {
+						try {
+							/* Set investment value from split. */
+							int investmentValue = Integer.parseInt(split[0]);
+							
+							/* Set net value from split. */
+							int netValue = Integer.parseInt(split[1]);
+							
+							/*
+							 * Create new Project object with values from split.
+							 */
+							Project project = new Project(investmentValue, netValue);
 							projects.add(project);
-						}
-						catch(NumberFormatException e){
+						} catch (NumberFormatException e) {
 							System.out.println("Error parsing number at line --> " + line);
 						}
 					}
 				}
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("Error reading file: " + filepath + " "
-					+ e.getMessage());
+			System.out.println("Error reading file: " + filepath + " " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Error reading file: " + filepath + " "
-					+ e.getMessage());
+			System.out.println("Error reading file: " + filepath + " " + e.getMessage());
 			e.printStackTrace();
-		} finally { //close IO
+		} finally { // close IO
 			try {
 				reader.close();
 			} catch (IOException e) {
@@ -240,5 +269,5 @@ class Project {
 	public void setNetValue(int netValue) {
 		this.netValue = netValue;
 	}
-	
+
 }
