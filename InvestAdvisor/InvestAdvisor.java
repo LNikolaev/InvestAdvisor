@@ -7,11 +7,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * @author Nikolaev
+ *
+ */
 public class InvestAdvisor {
 
-	static int totalInvestmentValue;
-	static ArrayList<Project> projects = new ArrayList<Project>();
-	static ArrayList<Project> selectedProjects = new ArrayList<Project>();
+	private static int totalInvestmentValue;
+	private static ArrayList<Project> projects = new ArrayList<Project>();
+	private static ArrayList<Project> selectedProjects = new ArrayList<Project>();
 	
 	public static void main(String[] args) {
 		String pathname = null;
@@ -27,6 +31,7 @@ public class InvestAdvisor {
 
 		System.out.println("--------Data loaded---------");
 		System.out.println("totalInvestmentValue: " + totalInvestmentValue);
+		//print values from read data
 		for (Project project : projects) {
 			System.out.println("Project: investmentValue = "
 					+ project.getInvestmentValue() + " netvalue = "
@@ -36,20 +41,26 @@ public class InvestAdvisor {
 		processData();
 		System.out.println("--------Data processed---------");
 		System.out.println("--------Selected Projects---------");
+		//print result from knapsack algorithm
 		for (Project project : selectedProjects) {
 			System.out.println("Project: investmentValue = "
 					+ project.getInvestmentValue() + " netvalue = "
 					+ project.getNetValue());
 		}
 		System.out.println("--------Writting to file---------");
+		//write result in file
 		writeSeletedProjectsToFile(pathname);
 		System.out.println("--------Job Done---------");
 	}
 
-	static void writeSeletedProjectsToFile(String pathname){
+	/**
+	 * @author Nikolaev
+	 * Write result to file
+	 */
+	public static void writeSeletedProjectsToFile(String pathname){
 		File file = new File(pathname);
 		File newFile = null;
-		if(file.getParent() == null){
+		if(file.getParent() == null){  //check if result file "selectedProjects.txt" exist. If does not exist, program will create it.
 			newFile = new File("selectedProjects.txt");
 		}
 		else{
@@ -63,7 +74,7 @@ public class InvestAdvisor {
 			writer = new BufferedWriter(fileWriter);
 			for(Project project : selectedProjects){
 				writer.write(project.getInvestmentValue() + " " + project.getNetValue());
-				writer.newLine();
+				writer.newLine(); //insert new line
 			}
 			// flushes the stream
 			writer.flush();
@@ -89,8 +100,11 @@ public class InvestAdvisor {
 			}
 		}
 	}
-	
-	static void processData() {
+	/**
+	 * @author Nikolaev
+	 * Present knapsack algorithm
+	 */
+	public static void processData() {
 
 		int N = projects.size(); // number of items
 		int W = totalInvestmentValue; // maximum weight of knapsack
@@ -145,7 +159,7 @@ public class InvestAdvisor {
 		}
 	}
 
-	static void readFileAndLoadData(String filepath) {
+	public static void readFileAndLoadData(String filepath) {
 		// Will come from arg parameter
 		File file = new File(filepath);
 		FileReader fileReader = null;
@@ -156,20 +170,20 @@ public class InvestAdvisor {
 			String line = null;
 
 			boolean firstLine = true;
-			while ((line = reader.readLine()) != null) {
-				if (firstLine) {
+			while ((line = reader.readLine()) != null) { //read lines for data.txt
+				if (firstLine) { //Use this if condition only for first line, where is total investment value.
 					firstLine = false;
-					totalInvestmentValue = Integer.parseInt(line.trim());
+					totalInvestmentValue = Integer.parseInt(line.trim()); //read and set total investment value
 				} else {
-					String[] split = line.split(" ");
-					if(split.length != 2){
+					String[] split = line.split(" "); //split values by white space
+					if(split.length != 2){ // check if elements is not equals to two.
 						System.out.println("Missed line due format error --> " + line);
 					}
 					else{
 						try{
-							int investmentValue = Integer.parseInt(split[0]);
-							int netValue = Integer.parseInt(split[1]);
-							Project project = new Project(investmentValue, netValue);
+							int investmentValue = Integer.parseInt(split[0]); //set investment value from split. 
+							int netValue = Integer.parseInt(split[1]); //set net value from split.
+							Project project = new Project(investmentValue, netValue); //create new Project object with values from split.
 							projects.add(project);
 						}
 						catch(NumberFormatException e){
@@ -186,7 +200,7 @@ public class InvestAdvisor {
 			System.out.println("Error reading file: " + filepath + " "
 					+ e.getMessage());
 			e.printStackTrace();
-		} finally {
+		} finally { //close IO
 			try {
 				reader.close();
 			} catch (IOException e) {
@@ -226,5 +240,5 @@ class Project {
 	public void setNetValue(int netValue) {
 		this.netValue = netValue;
 	}
-
+	
 }
